@@ -1,14 +1,13 @@
 package com.sistema.blog.sistemablogspringbootapirest.service;
 
-import java.util.List;
-
 import com.sistema.blog.sistemablogspringbootapirest.model.dto.PostDTO;
+import com.sistema.blog.sistemablogspringbootapirest.model.response.PostResponse;
 
 public interface IPostService {
     
     public PostDTO createPost(PostDTO postDTO);
 
-    public List<PostDTO> listPosts();
+    public PostResponse listPosts(int pageNo, int pageSize, String orderBy, String sortDir);
 
     public PostDTO getPostById(long id);
 
