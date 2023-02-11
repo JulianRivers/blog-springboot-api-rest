@@ -4,8 +4,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import com.sistema.blog.sistemablogspringbootapirest.exception.BlogException;
 import com.sistema.blog.sistemablogspringbootapirest.exception.ResourceNotFoundException;
 import com.sistema.blog.sistemablogspringbootapirest.model.dto.CommentDTO;
 import com.sistema.blog.sistemablogspringbootapirest.model.entity.Comment;
@@ -55,11 +57,47 @@ public class CommentService implements ICommentService {
         return comments.stream().map(comment -> mapCommentDTO(comment)).collect(Collectors.toList());
     }
 
+
     @Override
     public CommentDTO getCommentById(long postId, long commentId) {
-        return null;
+        Post post = postRepository.findById(postId).orElseThrow(() -> new ResourceNotFoundException("Post", "id", String.valueOf(postId)));
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new ResourceNotFoundException("Comment", "id", String.valueOf(commentId)));
 
-
+        if(comment.getPost().getId() != post.getId()){
+            throw new BlogException(HttpStatus.BAD_REQUEST, "Comment not found");
+        }
+        return mapCommentDTO(comment);
     }
+
+    @Override
+    public CommentDTO updateComment(long postId, long commentId, CommentDTO requestComment){
+        Post post = postRepository.findById(postId).orElseThrow(() -> new ResourceNotFoundException("Post", "id", String.valueOf(postId)));
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new ResourceNotFoundException("Comment", "id", String.valueOf(commentId)));
+
+        if(comment.getPost().getId() != post.getId()){
+            throw new BlogException(HttpStatus.BAD_REQUEST, "Comment not found");
+        }
+
+        comment.setName(requestComment.getName());
+        comment.setEmail(requestComment.getEmail());
+        comment.setContent(requestComment.getContent());
+
+        Comment updatedComment = commentRepository.save(comment);
+
+        return mapCommentDTO(updatedComment);
+    }
+
+    @Override
+    public void deleteComment(long postId, long commentId) {
+        Post post = postRepository.findById(postId).orElseThrow(() -> new ResourceNotFoundException("Post", "id", String.valueOf(postId)));
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new ResourceNotFoundException("Comment", "id", String.valueOf(commentId)));
+
+        if(comment.getPost().getId() != post.getId()){
+            throw new BlogException(HttpStatus.BAD_REQUEST, "Comment not found");
+        }
+
+        commentRepository.delete(comment);
+    }
+
 
 }
