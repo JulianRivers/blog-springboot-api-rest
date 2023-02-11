@@ -3,6 +3,7 @@ package com.sistema.blog.sistemablogspringbootapirest.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -18,7 +19,8 @@ import com.sistema.blog.sistemablogspringbootapirest.respository.PostRepository;
 
 @Service
 public class PostService implements IPostService {
-
+    @Autowired
+    private ModelMapper modelMapper;
     @Autowired
     private PostRepository postRepository;
 
@@ -81,22 +83,14 @@ public class PostService implements IPostService {
 
      // change Post entity to Post DTO
      private PostDTO mapPostDTO(Post post) {
-        PostDTO postDTO = new PostDTO();
-
-        postDTO.setId(post.getId());
-        postDTO.setTitle(post.getTitle());
-        postDTO.setDescription(post.getDescription());
-        postDTO.setContent(post.getContent());
+        PostDTO postDTO = modelMapper.map(post, PostDTO.class);
 
         return postDTO;
     }
 
     // change Post DTO to Post Entity
     private Post mapPost(PostDTO postDTO) {
-        Post post = new Post();
-        post.setTitle(postDTO.getTitle());
-        post.setDescription(postDTO.getDescription());
-        post.setContent(postDTO.getContent());
+        Post post = modelMapper.map(postDTO, Post.class);
         return post;
     }
 
