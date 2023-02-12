@@ -81,6 +81,8 @@ public class CommentService implements ICommentService {
         return mapCommentDTO(updatedComment);
     }
 
+
+
     @Override
     public void deleteComment(long postId, long commentId) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new ResourceNotFoundException("Post", "id", String.valueOf(postId)));
@@ -92,5 +94,6 @@ public class CommentService implements ICommentService {
 
         commentRepository.delete(comment);
     }
+
 
 }
