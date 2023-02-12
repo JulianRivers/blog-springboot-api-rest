@@ -3,6 +3,7 @@ package com.sistema.blog.sistemablogspringbootapirest.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -17,7 +18,8 @@ import com.sistema.blog.sistemablogspringbootapirest.respository.PostRepository;
 
 @Service
 public class CommentService implements ICommentService {
-
+    @Autowired
+    private ModelMapper modelMapper;
     @Autowired
     private CommentRepository commentRepository;
 
@@ -25,20 +27,12 @@ public class CommentService implements ICommentService {
     private PostRepository postRepository;
 
     private CommentDTO mapCommentDTO(Comment comment) {
-        CommentDTO commentDTO = new CommentDTO();
-        commentDTO.setId(comment.getId());
-        commentDTO.setName(comment.getName());
-        commentDTO.setContent(comment.getContent());
-        commentDTO.setEmail(comment.getEmail());
+        CommentDTO commentDTO = modelMapper.map(comment, CommentDTO.class);
         return commentDTO;
     }
 
     private Comment mapComment(CommentDTO commentDTO) {
-        Comment comment = new Comment();
-        comment.setId(commentDTO.getId());
-        comment.setName(commentDTO.getName());
-        comment.setContent(commentDTO.getContent());
-        comment.setEmail(commentDTO.getEmail());
+        Comment comment = modelMapper.map(commentDTO, Comment.class);
         return comment;
     }
 
@@ -86,6 +80,8 @@ public class CommentService implements ICommentService {
 
         return mapCommentDTO(updatedComment);
     }
+
+
 
     @Override
     public void deleteComment(long postId, long commentId) {
